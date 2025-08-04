@@ -22,12 +22,16 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import LoadingButton from '@/components/app/LoadingButton';
+import { login } from './action';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
   const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
 
   const form = useForm<LoginData>({
     resolver: zodResolver(loginSchema),
@@ -37,10 +41,18 @@ export function LoginForm({
     },
   });
 
-  const onSubmit = (data: LoginData) => {
+  const onSubmit = async (data: LoginData) => {
     setLoading(true);
 
-    setLoading(false);
+    const { success, error } = await login(data);
+    if (success) {
+      toast.success('Login successful');
+      form.reset();
+      router.replace('/');
+    } else {
+      toast.error(error, { richColors: true });
+      setLoading(false);
+    }
   };
 
   return (

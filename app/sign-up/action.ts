@@ -10,12 +10,17 @@ export async function signup(body: SignupData) {
 
   const supabase = await createClient();
 
-  let { data, error: supError } = await supabase.auth.signUp({
+  const { data, error: supError } = await supabase.auth.signUp({
     email: body.email,
     password: body.password,
   });
 
-  if (error) return { success: false, error: supError, data };
+  if (error)
+    return {
+      success: false,
+      error: supError?.message || 'Something went wrong',
+      data,
+    };
 
-  return { success: true, data, error: supError };
+  return { success: true, error: undefined, data: undefined };
 }

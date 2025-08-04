@@ -43,20 +43,14 @@ export function SignupForm({
   const onSubmit = async (data: SignupData) => {
     setLoading(true);
 
-    const { success, data: res, error } = await signup(data);
+    const { success, error } = await signup(data);
     if (success) {
-      toast.success('We have sent you a verification email', {
-        position: 'top-center',
-      });
-      console.log(res);
+      toast.success('We have sent you a verification email');
       form.reset();
-    } else {
-      toast.error('something went wrong', {
+    } else
+      toast.error(error, {
         richColors: true,
-        position: 'top-center',
       });
-      console.log(error);
-    }
 
     setLoading(false);
   };
