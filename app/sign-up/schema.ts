@@ -5,7 +5,7 @@ export const signupSchema = z
     email: z.email(),
     password: z
       .string()
-      .min(8, 'must be atleast 5 character long')
+      .min(6, 'must be atleast 6 character long')
       .max(50, 'cannot exceed 50 chars')
       .regex(/[A-Z]/, 'must contain atleast one uppercase character')
       .regex(/[a-z]/, 'must contain atleast one lowercase character'),

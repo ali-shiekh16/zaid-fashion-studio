@@ -22,6 +22,8 @@ import { SignupData, signupSchema } from './schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import LoadingButton from '@/components/app/LoadingButton';
+import { signup } from './action';
+import { toast } from 'sonner';
 
 export function SignupForm({
   className,
@@ -38,8 +40,23 @@ export function SignupForm({
     },
   });
 
-  const onSubmit = (data: SignupData) => {
+  const onSubmit = async (data: SignupData) => {
     setLoading(true);
+
+    const { success, data: res, error } = await signup(data);
+    if (success) {
+      toast.success('We have sent you a verification email', {
+        position: 'top-center',
+      });
+      console.log(res);
+      form.reset();
+    } else {
+      toast.error('something went wrong', {
+        richColors: true,
+        position: 'top-center',
+      });
+      console.log(error);
+    }
 
     setLoading(false);
   };
@@ -65,11 +82,7 @@ export function SignupForm({
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            placeholder='m@example.com'
-                            required
-                          />
+                          <Input {...field} placeholder='m@example.com' />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -84,7 +97,7 @@ export function SignupForm({
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input {...field} required type='password' />
+                          <Input {...field} type='password' />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -99,7 +112,7 @@ export function SignupForm({
                       <FormItem>
                         <FormLabel>Confirm Password</FormLabel>
                         <FormControl>
-                          <Input {...field} required type='password' />
+                          <Input {...field} type='password' />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
