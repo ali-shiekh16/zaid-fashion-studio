@@ -54,7 +54,7 @@ export function ForgotPassForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder='m@example.com' />
+                    <Input {...field} placeholder='m@example.com' autoFocus />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

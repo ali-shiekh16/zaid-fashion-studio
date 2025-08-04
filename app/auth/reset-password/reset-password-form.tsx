@@ -59,7 +59,7 @@ export function ResetPassForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input {...field} type='password' />
+                    <Input {...field} type='password' autoFocus />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
