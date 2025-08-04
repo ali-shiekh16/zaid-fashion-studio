@@ -9,6 +9,9 @@ export async function signup(body: SignupData) {
   if (!success) return { success, error: error.message, data: undefined };
 
   const supabase = await createClient();
+  const admin = supabase.auth.admin;
+
+  // admin.get
 
   const { data, error: supError } = await supabase.auth.signUp({
     email: body.email,

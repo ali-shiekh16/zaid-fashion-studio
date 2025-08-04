@@ -6,6 +6,7 @@ import { Button, buttonVariants } from '../ui/button';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { logout } from '@/lib/auth/logout';
+import { toast } from 'sonner';
 
 type Props = React.ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> & {
@@ -19,8 +20,14 @@ const LogoutButton = ({ children, onClick, ...props }: Props) => {
 
   const handleLogout = async () => {
     setLoading(true);
-    await logout();
-    router.replace('/login');
+    const { error, success } = await logout();
+    if (!success) {
+      toast.error(error, { richColors: true });
+      setLoading(false);
+    } else {
+      toast.success('Logged out');
+      router.replace('/login');
+    }
   };
 
   return (
