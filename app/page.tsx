@@ -1,10 +1,11 @@
-import { Button } from '@/components/ui/button';
 import React from 'react';
+
+import LogoutButton from '@/components/app/logout-button';
 
 const Page = () => {
   return (
     <div className='h-screen grid place-content-center'>
-      <Button>Shadcn</Button>
+      <LogoutButton>Logout</LogoutButton>
     </div>
   );
 };
