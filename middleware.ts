@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthCookies } from './lib/cookies/auth';
 
-const publicRoutes = [/^\/login$/, /^\/signup$/];
+const publicRoutes = [/^\/login$/, /^\/signup$/, /^\/auth(\/.*)/];
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
