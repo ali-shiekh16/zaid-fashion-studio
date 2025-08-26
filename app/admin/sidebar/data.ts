@@ -35,15 +35,11 @@ export const data = {
       items: [
         {
           title: 'View All Categories',
-          url: '#',
+          url: base + '/categories',
         },
         {
           title: 'Add Categories',
-          url: '#',
-        },
-        {
-          title: 'Settings',
-          url: '#',
+          url: base + '/categories/add',
         },
       ],
     },

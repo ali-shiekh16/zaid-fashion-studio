@@ -1,7 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server-client';
-import schema, { Category } from './schema';
+import schema, { Category } from '../categories-form/schema';
 
 export async function addCategory(body: Category) {
   const { success, error: err } = schema.safeParse(body);

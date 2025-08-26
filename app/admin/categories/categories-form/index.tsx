@@ -15,30 +15,60 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { addCategory } from './action-add';
 import { toast } from 'sonner';
 import LoadingButton from '@/components/app/LoadingButton';
+import { useRouter } from 'next/navigation';
 
-const CategoriesForm = () => {
+interface Props {
+  defaultValues?: Category;
+  id?: number;
+  successMessage?: string;
+  redirectPath?: string;
+  handleAction?: (
+    data: Category,
+    id?: number
+  ) => Promise<{
+    success: boolean;
+    error?: string | undefined;
+    data?: Category | null | undefined;
+  }>;
+}
+
+const CategoriesForm = ({
+  handleAction,
+  defaultValues,
+  id,
+  successMessage,
+  redirectPath,
+}: Props) => {
   const [loading, setLoading] = useState(false);
 
   const form = useForm<Category>({
     resolver: zodResolver(schema),
-    defaultValues: {
+    defaultValues: defaultValues || {
       name: '',
       description: '',
     },
   });
 
+  const router = useRouter();
+
   const onSubmit = async (data: Category) => {
+    if (!handleAction) return;
+
     setLoading(true);
 
-    const { error, data: resData, success } = await addCategory(data);
+    const { error, success } = await handleAction(data, id);
 
     if (success) {
-      console.log(resData);
-      toast.success('Category Added!');
-      form.reset();
+      toast.success(successMessage || 'Done!');
+
+      if (redirectPath) router.replace(redirectPath);
+
+      form.reset({
+        name: '',
+        description: '',
+      });
     } else toast.error(error || 'Something went wrong, try again.');
 
     setLoading(false);

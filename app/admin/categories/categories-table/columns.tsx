@@ -16,6 +16,7 @@ import { Category } from '@/lib/data/categories/types';
 import { deleteCategory } from '../action-delete';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import Link from 'next/link';
 
 const columns: ColumnDef<Category>[] = [
   {
@@ -67,7 +68,9 @@ const columns: ColumnDef<Category>[] = [
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href={`/admin/categories/edit/${id}`}> Edit</Link>
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
