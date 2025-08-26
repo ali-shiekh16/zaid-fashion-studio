@@ -1,6 +1,8 @@
 import {
   BookOpen,
   Bot,
+  Box,
+  Boxes,
   Frame,
   LayoutDashboard,
   LifeBuoy,
@@ -8,7 +10,6 @@ import {
   PieChart,
   Send,
   Settings2,
-  SquareTerminal,
 } from 'lucide-react';
 
 const base = '/admin';
@@ -30,7 +31,7 @@ export const data = {
     {
       title: 'Categories',
       url: base + '/categories',
-      icon: SquareTerminal,
+      icon: Boxes,
       isActive: false,
       items: [
         {
@@ -44,21 +45,17 @@ export const data = {
       ],
     },
     {
-      title: 'Models',
-      url: '#',
-      icon: Bot,
+      title: 'Products',
+      url: base + '/products',
+      icon: Box,
       items: [
         {
-          title: 'Genesis',
-          url: '#',
+          title: 'View All Products',
+          url: base + '/products',
         },
         {
-          title: 'Explorer',
-          url: '#',
-        },
-        {
-          title: 'Quantum',
-          url: '#',
+          title: 'Add Products',
+          url: base + '/products/add',
         },
       ],
     },
