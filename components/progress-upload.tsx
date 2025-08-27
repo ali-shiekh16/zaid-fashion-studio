@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -36,6 +36,10 @@ interface SupabaseUploadProps {
   multiple?: boolean;
   className?: string;
   onUploadComplete?: (files: { url: string; name: string }[]) => void;
+  onFileAdd?: (urls: string) => void;
+  onFileRemove?: (urls: string) => void;
+  onAllRemove?: () => void;
+  resetKey?: number;
 }
 
 export default function SupabaseUpload({
@@ -47,6 +51,10 @@ export default function SupabaseUpload({
   multiple = true,
   className,
   onUploadComplete,
+  onFileAdd,
+  onFileRemove,
+  onAllRemove,
+  resetKey,
 }: SupabaseUploadProps) {
   const [files, setFiles] = useState<SupabaseUploadItem[]>([]);
 
@@ -111,6 +119,8 @@ export default function SupabaseUpload({
       )
     );
 
+    onFileAdd?.(data.publicUrl);
+
     onUploadComplete?.([{ url: data.publicUrl, name: item.file.name }]);
   };
 
@@ -133,6 +143,8 @@ export default function SupabaseUpload({
     if (file?.path) {
       await supabaseClient.storage.from(bucket).remove([file.path]);
     }
+
+    onFileRemove?.(files.find(f => f.id === fileId)?.url || '');
     setFiles(prev => prev.filter(f => f.id !== fileId));
   };
 
@@ -144,12 +156,19 @@ export default function SupabaseUpload({
     if (completedPaths.length > 0) {
       await supabaseClient.storage.from(bucket).remove(completedPaths);
     }
+
     setFiles([]);
+    onAllRemove?.();
   };
 
   const completedCount = files.filter(f => f.status === 'completed').length;
   const errorCount = files.filter(f => f.status === 'error').length;
   const uploadingCount = files.filter(f => f.status === 'uploading').length;
+
+  // Clear all files when parent signals a reset
+  useEffect(() => {
+    void clearAll();
+  }, [resetKey]);
 
   return (
     <div className={cn('w-full max-w-2xl', className)}>

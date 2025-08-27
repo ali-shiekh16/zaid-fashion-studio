@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { useForm } from 'react-hook-form';
 import schema, { ProductInput } from './schema';
@@ -46,11 +46,8 @@ const ProductsForm = ({
   redirectPath,
 }: Props) => {
   const [loading, setLoading] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
   const { isFetched, data: categories } = useCategories();
-
-  useEffect(() => {
-    console.log(categories);
-  }, [isFetched]);
 
   const form = useForm<ProductInput>({
     resolver: zodResolver(schema),
@@ -58,8 +55,9 @@ const ProductsForm = ({
       name: '',
       description: '',
       price: '',
-      category_id: 0,
+      category_id: '',
       stock: '',
+      images: [],
     },
   });
 
@@ -80,7 +78,13 @@ const ProductsForm = ({
       form.reset({
         name: '',
         description: '',
+        price: '',
+        category_id: '',
+        stock: '',
+        images: [],
       });
+
+      setResetKey(prev => prev + 1);
     } else toast.error(error || 'Something went wrong, try again.');
 
     setLoading(false);
@@ -88,9 +92,9 @@ const ProductsForm = ({
 
   return (
     <Form {...form}>
-      <form className='space-y-5' onSubmit={form.handleSubmit(onSubmit)}>
-        <div className='md:grid md:grid-cols-2 md:gap-x-5'>
-          <div>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <div className='md:grid md:grid-cols-2 md:gap-x-5 space-y-5 md:space-y-0'>
+          <div className='space-y-5'>
             <FormField
               control={form.control}
               name='name'
@@ -118,7 +122,7 @@ const ProductsForm = ({
                         emptyMessage='There are no categories'
                         placeholder='Select Category'
                         searchPlaceholder='Search Category'
-                        value={String(field.value)}
+                        value={field.value}
                         onChange={field.onChange}
                         options={categories?.map(c => ({
                           label: c.name,
@@ -178,17 +182,38 @@ const ProductsForm = ({
           </div>
 
           <div>
-            <FormLabel className='mb-2'>Images</FormLabel>
-            <ProgressUpload
-              bucket='default'
-              accept='image/*'
-              maxFiles={10}
-              maxSize={5 * 1024 * 1024} // 5 MB
-              multiple={true}
-              onUploadComplete={files => {
-                console.log('✅ Uploaded files:', files);
-                // files = [{ url: "https://xyz.supabase.co/storage/v1/object/public/avatars/profile-pics/uuid-filename.png", name: "filename.png" }]
-              }}
+            <FormField
+              control={form.control}
+              name='images'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className='mb-2'>Images</FormLabel>
+                  <ProgressUpload
+                    bucket='default'
+                    accept='image/*'
+                    maxFiles={10}
+                    maxSize={5 * 1024 * 1024} // 5 MB
+                    multiple={true}
+                    onAllRemove={() => form.setValue('images', [])}
+                    onFileAdd={image => {
+                      const prevImages =
+                        form.getValues('images') || ([] as string[]);
+                      field.onChange([...prevImages, image]);
+                    }}
+                    onFileRemove={val => {
+                      const prevImages: string[] =
+                        form.getValues('images') || [];
+
+                      const newImages: string[] =
+                        prevImages.filter(url => url !== val) || [];
+
+                      field.onChange(newImages);
+                    }}
+                    resetKey={resetKey}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
             />
           </div>
         </div>

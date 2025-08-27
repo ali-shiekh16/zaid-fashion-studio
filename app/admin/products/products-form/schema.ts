@@ -11,7 +11,7 @@ const productSchema = z.object({
     .refine(val => +val > 0, 'price must be positive'),
 
   category_id: z
-    .number()
+    .string()
     .min(1, 'Category is required')
     .refine(val => +val > 0, 'price must be positive'),
 
@@ -19,6 +19,8 @@ const productSchema = z.object({
     .string()
     .min(1, 'Stock is required')
     .refine(val => +val > 0, 'price must be positive'),
+
+  images: z.array(z.string()).min(1, 'At least 1 image is required'),
 });
 
 export type ProductInput = z.infer<typeof productSchema>;
