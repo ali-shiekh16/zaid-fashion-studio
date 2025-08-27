@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import Link from 'next/link';
 import { Product } from '@/lib/types/product';
+import { deleteProduct } from '../actions/delete-product';
 
 const columns: ColumnDef<Product>[] = [
   {
@@ -56,13 +57,14 @@ const columns: ColumnDef<Product>[] = [
       const [loading, setLoading] = useState(false);
 
       const handleDelete = async () => {
-        toast.success('Product Deleted!');
-
-        // setLoading(true);
-        // const { success, error } = await deleteCategory(id);
-        // if (success) toast.success('Category Deleted!');
-        // else toast.error(error || 'Category could not be deleted!');
-        // setLoading(false);
+        setLoading(true);
+        const { success, error } = await deleteProduct(id);
+        if (success) toast.success('Category Deleted!');
+        else
+          toast.error(error || 'Category could not be deleted!', {
+            richColors: true,
+          });
+        setLoading(false);
       };
 
       return (
