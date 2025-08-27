@@ -12,13 +12,12 @@ import {
 import { MoreHorizontal, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DataTableColumnHeader } from '@/components/ui/data-table/data-table-column-header';
-import { Category } from '@/lib/data/categories/types';
-import { deleteCategory } from '../action-delete';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import Link from 'next/link';
+import { Product } from '@/lib/types/product';
 
-const columns: ColumnDef<Category>[] = [
+const columns: ColumnDef<Product>[] = [
   {
     accessorKey: 'id',
     header: ({ column }) => (
@@ -28,13 +27,26 @@ const columns: ColumnDef<Category>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Name' />
+      <DataTableColumnHeader column={column} title='Title' />
     ),
   },
   {
-    accessorKey: 'description',
+    accessorKey: 'category.name',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Description' />
+      <DataTableColumnHeader column={column} title='Category' />
+    ),
+  },
+
+  {
+    accessorKey: 'price',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Price' />
+    ),
+  },
+  {
+    accessorKey: 'stock',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Stock' />
     ),
   },
   {
@@ -44,13 +56,13 @@ const columns: ColumnDef<Category>[] = [
       const [loading, setLoading] = useState(false);
 
       const handleDelete = async () => {
-        setLoading(true);
-        const { success, error } = await deleteCategory(id);
+        toast.success('Product Deleted!');
 
-        if (success) toast.success('Category Deleted!');
-        else toast.error(error || 'Category could not be deleted!');
-
-        setLoading(false);
+        // setLoading(true);
+        // const { success, error } = await deleteCategory(id);
+        // if (success) toast.success('Category Deleted!');
+        // else toast.error(error || 'Category could not be deleted!');
+        // setLoading(false);
       };
 
       return (
@@ -68,8 +80,12 @@ const columns: ColumnDef<Category>[] = [
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
+
             <DropdownMenuItem>
-              <Link href={`/admin/categories/edit/${id}`}>Edit</Link>
+              <Link href={`/products/${id}`}>View</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href={`/admin/products/edit/${id}`}>Edit</Link>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
