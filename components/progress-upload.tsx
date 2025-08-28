@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -12,10 +12,17 @@ import {
   AlertIcon,
   AlertTitle,
 } from '@/components/ui/alert';
-import { UploadIcon, XIcon, RefreshCwIcon, TriangleAlert } from 'lucide-react';
+import {
+  UploadIcon,
+  XIcon,
+  RefreshCwIcon,
+  TriangleAlert,
+  X,
+} from 'lucide-react';
 import { formatBytes } from '@/hooks/use-file-upload';
 import { supabaseClient } from '@/lib/supabase/client';
 import { useDropzone } from 'react-dropzone';
+import { toast } from 'sonner';
 
 interface SupabaseUploadItem {
   id: string;
@@ -40,6 +47,8 @@ interface SupabaseUploadProps {
   onFileRemove?: (urls: string) => void;
   onAllRemove?: () => void;
   resetKey?: number;
+  editUrls?: string[];
+  setEditUrls?: (urls: string[]) => void;
 }
 
 export default function SupabaseUpload({
@@ -55,6 +64,8 @@ export default function SupabaseUpload({
   onFileRemove,
   onAllRemove,
   resetKey,
+  editUrls,
+  setEditUrls,
 }: SupabaseUploadProps) {
   const [files, setFiles] = useState<SupabaseUploadItem[]>([]);
 
@@ -63,7 +74,10 @@ export default function SupabaseUpload({
 
     const tooLarge = selected.filter(f => f.size > maxSize);
     if (tooLarge.length > 0) {
-      alert(`Some files are too big! Max size is ${formatBytes(maxSize)}`);
+      toast.error(
+        `Some files are too big! Max size is ${formatBytes(maxSize)}`,
+        { richColors: true }
+      );
       return;
     }
 
@@ -85,7 +99,9 @@ export default function SupabaseUpload({
   });
 
   const uploadToSupabase = async (item: SupabaseUploadItem) => {
-    const filePath = `${path}${item.id}-${item.file.name}`;
+    const cleanPath = path ? `${path.replace(/\/?$/, '/')}` : '';
+    const safeName = item.file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+    const filePath = `${cleanPath}${item.id}-${safeName}`;
 
     const { error } = await supabaseClient.storage
       .from(bucket)
@@ -120,7 +136,6 @@ export default function SupabaseUpload({
     );
 
     onFileAdd?.(data.publicUrl);
-
     onUploadComplete?.([{ url: data.publicUrl, name: item.file.name }]);
   };
 
@@ -148,6 +163,20 @@ export default function SupabaseUpload({
     setFiles(prev => prev.filter(f => f.id !== fileId));
   };
 
+  const removeEditUrls = async (urls: string[]) => {
+    if (!editUrls || !setEditUrls) return;
+
+    const paths = urls.map(url => getPathFromUrl(url))?.filter(n => n);
+    if (!paths?.length) return;
+
+    const { error } = await supabaseClient.storage.from(bucket).remove(paths);
+
+    if (error) return toast.error('Failed to delete', { richColors: true });
+
+    setEditUrls(editUrls.filter(path => !urls.includes(path)));
+    if (onFileRemove) urls.forEach(onFileRemove);
+  };
+
   const clearAll = async () => {
     const completedPaths = files
       .filter(f => f.status === 'completed' && f.path)
@@ -155,6 +184,11 @@ export default function SupabaseUpload({
 
     if (completedPaths.length > 0) {
       await supabaseClient.storage.from(bucket).remove(completedPaths);
+    }
+
+    if (editUrls?.length) {
+      await removeEditUrls(editUrls);
+      setEditUrls?.([]);
     }
 
     setFiles([]);
@@ -166,8 +200,17 @@ export default function SupabaseUpload({
   const uploadingCount = files.filter(f => f.status === 'uploading').length;
 
   // Clear all files when parent signals a reset
+  const firstRender = useRef(true);
+
   useEffect(() => {
-    void clearAll();
+    if (firstRender.current) {
+      firstRender.current = false;
+      return; // skip on initial render
+    }
+
+    // only reset the upload queue, not existing editUrls
+    setFiles([]);
+    onAllRemove?.();
   }, [resetKey]);
 
   return (
@@ -215,6 +258,22 @@ export default function SupabaseUpload({
           </Button>
         </div>
       )}
+
+      <div className='flex flex-wrap gap-5 my-5'>
+        {editUrls?.map((url, i) => (
+          <div
+            key={i}
+            className='rounded-md w-44 md:w-48 overflow-hidden relative'
+          >
+            <X
+              className='absolute inset-x-[85%] inset-y-2 bg-black/50 rounded-full size-6 p-0.5 cursor-pointer'
+              stroke='#fff'
+              onClick={() => removeEditUrls([url])}
+            />
+            <img className='object-cover w-full h-full' src={url} />
+          </div>
+        ))}
+      </div>
 
       {/* File List */}
       {files.map(file => (
@@ -275,4 +334,15 @@ export default function SupabaseUpload({
       ))}
     </div>
   );
+}
+
+function getPathFromUrl(url: string) {
+  if (!url.length) return '';
+
+  let index = url.indexOf('default/');
+  if (index === -1) return '';
+
+  index += 8;
+
+  return url.slice(index);
 }

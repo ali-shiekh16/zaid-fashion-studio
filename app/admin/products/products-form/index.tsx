@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useForm } from 'react-hook-form';
 import schema, { ProductInput } from './schema';
@@ -47,6 +47,9 @@ const ProductsForm = ({
 }: Props) => {
   const [loading, setLoading] = useState(false);
   const [resetKey, setResetKey] = useState(0);
+  const [editUrls, setEditUrls] = useState<string[]>(
+    defaultValues?.images || []
+  );
   const { isFetched, data: categories } = useCategories();
 
   const form = useForm<ProductInput>({
@@ -62,6 +65,15 @@ const ProductsForm = ({
   });
 
   const router = useRouter();
+
+  // Sync editUrls with react-hook-form on mount
+  useEffect(() => {
+    if (editUrls.length > 0) {
+      const images = form.getValues('images');
+      const editImages = editUrls.filter(url => !images.includes(url));
+      form.setValue('images', editImages, { shouldValidate: true });
+    }
+  }, [editUrls, form]);
 
   const onSubmit = async (data: ProductInput) => {
     if (!handleAction) return;
@@ -85,7 +97,10 @@ const ProductsForm = ({
       });
 
       setResetKey(prev => prev + 1);
-    } else toast.error(error || 'Something went wrong, try again.');
+    } else
+      toast.error(error || 'Something went wrong, try again.', {
+        richColors: true,
+      });
 
     setLoading(false);
   };
@@ -198,7 +213,12 @@ const ProductsForm = ({
                     onFileAdd={image => {
                       const prevImages =
                         form.getValues('images') || ([] as string[]);
-                      field.onChange([...prevImages, image]);
+
+                      const urls = [...editUrls, ...prevImages, image];
+
+                      // console.log(urls, 'on file add form');
+
+                      field.onChange([...new Set(urls)]);
                     }}
                     onFileRemove={val => {
                       const prevImages: string[] =
@@ -207,9 +227,13 @@ const ProductsForm = ({
                       const newImages: string[] =
                         prevImages.filter(url => url !== val) || [];
 
+                      // console.log(newImages, 'on file add form')
+
                       field.onChange(newImages);
                     }}
                     resetKey={resetKey}
+                    editUrls={editUrls}
+                    setEditUrls={(urls: string[]) => setEditUrls(urls)}
                   />
                   <FormMessage />
                 </FormItem>
@@ -218,7 +242,7 @@ const ProductsForm = ({
           </div>
         </div>
 
-        <div className='flex justify-end'>
+        <div className='flex justify-end mt-2'>
           <LoadingButton
             loading={loading}
             disabled={loading}

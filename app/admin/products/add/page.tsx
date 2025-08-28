@@ -1,11 +1,12 @@
 import { Container } from '@/components/layout/container';
 import React from 'react';
 import ProductsForm from '../products-form';
+import { addProduct } from '../actions/add-product';
 
 const page = () => {
   return (
     <Container>
-      <ProductsForm />
+      <ProductsForm handleAction={addProduct} successMessage='Product Added!' />
     </Container>
   );
 };

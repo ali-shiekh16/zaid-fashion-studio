@@ -1,19 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server-client';
-
-interface Res {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  category: {
-    id: number;
-    name: string;
-  };
-  stock: number;
-  images: { image_url: string }[];
-}
+import { ProductRes } from './type';
 
 export async function getProducts() {
   const supabase = await createClient();
@@ -35,7 +23,7 @@ export async function getProducts() {
 
   if (error) return { success: false, error: error.message, data: undefined };
 
-  const products = data as unknown as Res[];
+  const products = data as unknown as ProductRes[];
   const transformed = products.map(p => ({
     ...p,
     images: p.images.map(i => i.image_url),
