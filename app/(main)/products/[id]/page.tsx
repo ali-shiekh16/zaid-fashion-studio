@@ -25,7 +25,7 @@ const Page = async ({ params }: PageProps) => {
   const { name: title, price, images, description } = product;
 
   return (
-    <Container className='flex flex-col md:grid md:grid-cols-2 gap-5 md:gap-10 my-20'>
+    <Container className='flex flex-col md:grid md:grid-cols-2 gap-5 md:gap-10 my-10'>
       <div className='order-1 md:order-0 '>
         <ImageCarouselBasic
           images={images.map(i => ({ title: product.name, url: i }))}
