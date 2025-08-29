@@ -1,6 +1,6 @@
 export function formatCurrency(
   amount: number,
-  locale: string = 'en-PK'
+  locale: string = 'en-us'
 ): string {
   return new Intl.NumberFormat(locale, {
     minimumFractionDigits: 0,
