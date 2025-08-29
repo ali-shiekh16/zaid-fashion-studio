@@ -1,45 +1,35 @@
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/app-utils';
+import { Product } from '@/lib/types/product';
 import Image from 'next/image';
+import Link from 'next/link';
 
-interface Props {
-  imageUrl: string;
-  discount?: string | null;
-  title: string;
-  price: number;
-  // onAddToCart?: () => void;
-  // onBuyNow?: () => void;
+interface Props extends Product {
+  onAddToCart?: () => void;
+  onBuyNow?: () => void;
 }
 
 function ProductCard({
-  discount,
-  imageUrl,
+  images,
   // onAddToCart = () => {},
   // onBuyNow = () => {},
   price,
-  title,
+  name: title,
+  id,
 }: Props) {
   return (
     <div className='group relative flex w-sm flex-col overflow-hidden rounded-md   transition-all duration-300'>
       {/* Image section with background and dynamic glow effect */}
-      <div className='relative overflow-hidden '>
-        {discount && (
-          <div className='absolute top-3 left-3 z-10'>
-            <span className='relative inline-block rounded-full bg-gradient-to-r from-teal-500 to-cyan-600 px-3 py-1.5 text-xs font-bold text-white'>
-              {discount}
-            </span>
-          </div>
-        )}
-
-        <div className='transition-transform duration-500 group-hover:scale-105'>
+      <div className='transition-transform duration-500 group-hover:scale-105'>
+        <Link href={`/products/${id}`}>
           <Image
             width='500'
             height='750'
             alt={title}
-            src={imageUrl}
+            src={images[0]}
             className='w-full h-full object-cover'
           />
-        </div>
+        </Link>
       </div>
 
       {/* Content section */}

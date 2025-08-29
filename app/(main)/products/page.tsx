@@ -9,14 +9,7 @@ const Page = async () => {
   return (
     <Container className='flex flex-wrap gap-5'>
       {success && products?.length ? (
-        products.map(p => (
-          <ProductCard
-            key={p.id}
-            title={p.name}
-            price={p.price}
-            imageUrl={p.images[0]}
-          />
-        ))
+        products.map(p => <ProductCard key={p.id} {...p} />)
       ) : (
         <h1 className='text-3xl text-center'>No Products Found</h1>
       )}

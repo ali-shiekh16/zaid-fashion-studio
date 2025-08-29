@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server-client';
 import { ProductRes } from './type';
+import { Product } from '@/lib/types/product';
 
 export async function getProducts() {
   const supabase = await createClient();
@@ -27,7 +28,7 @@ export async function getProducts() {
   const transformed = products.map(p => ({
     ...p,
     images: p.images.map(i => i.image_url),
-  }));
+  })) as Product[];
 
   return {
     success: true,
