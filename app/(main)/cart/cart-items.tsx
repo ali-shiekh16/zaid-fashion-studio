@@ -1,5 +1,6 @@
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getProducts } from '@/lib/data/products/get-products';
 import React from 'react';
 import CartItem from './cart-item';
 
@@ -9,9 +10,17 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { useCart } from '@/lib/stores/cart-store/use-cart';
 
-const CartItems = async () => {
-  const { data } = await getProducts();
+const CartItems = () => {
+  const items = useCart(c => c.items);
+
+  if (!items.length)
+    return (
+      <h1 className='text-3xl text-center my-10 text-muted-foreground'>
+        Empty cart :(
+      </h1>
+    );
 
   return (
     <Accordion type='single' collapsible defaultValue='shopping-cart'>
@@ -25,7 +34,7 @@ const CartItems = async () => {
 
           <AccordionContent className='m-0 p-0'>
             <CardContent className='space-y-2 divide-muted divide-y'>
-              {data?.length && data.map(p => <CartItem {...p} />)}
+              {items?.length && items.map(p => <CartItem key={p.id} {...p} />)}
             </CardContent>
           </AccordionContent>
         </Card>

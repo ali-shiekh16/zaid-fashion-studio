@@ -1,3 +1,4 @@
+'use client';
 import {
   Card,
   CardContent,
@@ -15,15 +16,18 @@ import {
 
 import { formatCurrency } from '@/lib/app-utils';
 import React from 'react';
+import { useCart } from '@/lib/stores/cart-store/use-cart';
 
-interface Props {
-  delivery: number;
-  tax: number;
-  gross: number;
-}
-
-const OrderSummary = ({ delivery, tax, gross }: Props) => {
+const OrderSummary = () => {
+  const items = useCart(c => c.items);
+  const tax = items.length ? 499 : 0;
+  const delivery = items.length ? 499 : 0;
+  const gross = items.reduce((a, b) => a + b.price * b.quantity, 0);
+  const discount = items.reduce((a, b) => a + b.price * b.quantity * 0.25, 0);
   const total = gross + tax + delivery;
+
+  // if (!items.length) return <></>;
+
   return (
     <Accordion type='single' collapsible defaultValue='order-summary'>
       <AccordionItem value='order-summary'>
@@ -38,7 +42,7 @@ const OrderSummary = ({ delivery, tax, gross }: Props) => {
             <CardContent className='space-y-2'>
               <div className='flex justify-between '>
                 <span>Discount</span>
-                <span>PKR {formatCurrency(0)}</span>
+                <span>PKR {formatCurrency(discount)}</span>
               </div>
 
               <div className='flex justify-between'>

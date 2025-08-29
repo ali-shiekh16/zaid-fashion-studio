@@ -26,6 +26,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { useCart } from '@/lib/stores/cart-store/use-cart';
 
 export type AddressFormProps = {
   value?: AddressFormValues;
@@ -33,6 +34,8 @@ export type AddressFormProps = {
 };
 
 function AddressForm({ className = '', value }: AddressFormProps) {
+  const items = useCart(c => c.items);
+
   const form = useForm<AddressFormValues>({
     defaultValues: value || {
       address1: '',

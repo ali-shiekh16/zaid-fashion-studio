@@ -16,6 +16,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import Link from 'next/link';
+import CartBadge from './cart-badge';
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
@@ -133,9 +134,7 @@ export default function Navbar() {
               <span className='relative'>
                 <ShoppingBag />
                 <span className='absolute -inset-y-2 inset-x-4'>
-                  <strong className='py-.5 px-1 rounded-full bg-destructive text-xs text-white'>
-                    2
-                  </strong>
+                  <CartBadge />
                 </span>
               </span>
             </Link>
@@ -150,9 +149,7 @@ export default function Navbar() {
             <span className='relative'>
               <ShoppingBag />
               <span className='absolute -inset-y-2 inset-x-4'>
-                <strong className='py-.5 px-1 rounded-full bg-destructive text-xs text-white'>
-                  2
-                </strong>
+                <CartBadge />
               </span>
             </span>
           </Link>
