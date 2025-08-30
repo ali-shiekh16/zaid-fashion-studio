@@ -9,8 +9,9 @@ export enum OrderStatus {
 
 export type Order = {
   id: string;
-  userId?: string;
+  user_id?: string;
   status: OrderStatus;
   total_amount: number;
   created_at: string;
+  tracking_id?: string;
 };
