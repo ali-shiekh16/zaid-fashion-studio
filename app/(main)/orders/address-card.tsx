@@ -6,7 +6,13 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Address } from '@/lib/types/address';
+import Link from 'next/link';
 import React from 'react';
+
+interface Props extends Address {
+  showEmail?: boolean;
+  showPhone?: boolean;
+}
 
 const AddressCard = ({
   city,
@@ -14,7 +20,11 @@ const AddressCard = ({
   postalCode,
   state,
   address1,
-}: Address) => {
+  email,
+  phone,
+  showEmail = false,
+  showPhone = false,
+}: Props) => {
   return (
     <Card className='max-h-fit'>
       <CardHeader>
@@ -39,6 +49,23 @@ const AddressCard = ({
           <div className='flex justify-between '>
             <span>Postal Code</span>
             <span>{postalCode}</span>
+          </div>
+        )}
+
+        {email && (
+          <div className='flex justify-between '>
+            <span>Email</span>
+            <Link className='underline' href={`mailto:${email}`}>
+              {email}
+            </Link>
+          </div>
+        )}
+        {phone && (
+          <div className='flex justify-between '>
+            <span>Phone</span>
+            <Link className='underline' href={`tel:${phone}`}>
+              {phone}
+            </Link>
           </div>
         )}
       </CardContent>

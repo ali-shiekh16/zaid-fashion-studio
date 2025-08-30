@@ -2,9 +2,9 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Container } from '@/components/layout/container';
 import { getOrder } from '@/lib/data/orders/get-order';
-import AddressCard from '../address-card';
-import OrderItem from '../order-item';
-import OrderSummary from '../order-summary';
+import AddressCard from '@/app/(main)/orders/address-card';
+import OrderItem from '@/app/(main)/orders/order-item';
+import OrderSummary from '@/app/(main)/orders/order-summary';
 import React from 'react';
 
 interface Props {
@@ -13,6 +13,7 @@ interface Props {
 
 const Page = async ({ params }: Props) => {
   const { id } = await params;
+
   const { data: order, success } = await getOrder(id);
 
   if (!success || !order)
@@ -42,7 +43,7 @@ const Page = async ({ params }: Props) => {
         </div>
       </div>
 
-      <div className='md:grid md:grid-cols-4 space-y-5 md:gap-x-5'>
+      <div className='space-y-5'>
         <Card className='max-h-fit md:col-span-3'>
           <CardHeader>
             <CardTitle>Ordered Items</CardTitle>
@@ -63,7 +64,7 @@ const Page = async ({ params }: Props) => {
           </CardContent>
         </Card>
 
-        <div className='space-y-5'>
+        <div className='space-y-5 md:grid md:grid-cols-2 md:gap-x-5'>
           <OrderSummary
             discount={25}
             delivery={499}
@@ -71,7 +72,7 @@ const Page = async ({ params }: Props) => {
             subtotal={subtotal}
             total={order.total_amount}
           />
-          <AddressCard {...order.addresses[0]} />
+          <AddressCard {...order.addresses[0]} showEmail showPhone />
         </div>
       </div>
     </Container>

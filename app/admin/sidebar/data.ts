@@ -1,6 +1,4 @@
 import {
-  BookOpen,
-  Bot,
   Box,
   Boxes,
   Frame,
@@ -10,6 +8,7 @@ import {
   PieChart,
   Send,
   Settings2,
+  ShoppingBag,
 } from 'lucide-react';
 
 const base = '/admin';
@@ -26,6 +25,12 @@ export const data = {
       url: base + '/dashboard',
       icon: LayoutDashboard,
       isActive: true,
+    },
+
+    {
+      title: 'Orders',
+      url: base + '/orders',
+      icon: ShoppingBag,
     },
 
     {
@@ -56,29 +61,6 @@ export const data = {
         {
           title: 'Add Products',
           url: base + '/products/add',
-        },
-      ],
-    },
-    {
-      title: 'Documentation',
-      url: '#',
-      icon: BookOpen,
-      items: [
-        {
-          title: 'Introduction',
-          url: '#',
-        },
-        {
-          title: 'Get Started',
-          url: '#',
-        },
-        {
-          title: 'Tutorials',
-          url: '#',
-        },
-        {
-          title: 'Changelog',
-          url: '#',
         },
       ],
     },
