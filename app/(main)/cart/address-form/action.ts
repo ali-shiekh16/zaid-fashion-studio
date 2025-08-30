@@ -85,6 +85,6 @@ export async function placeOrder(body: Body) {
   return {
     success: true,
     error: undefined,
-    data: undefined,
+    data: { trackingId: ordersRes.data[0].tracking_id },
   };
 }

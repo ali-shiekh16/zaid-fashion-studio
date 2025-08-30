@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/accordion';
 import { useCart } from '@/lib/stores/cart-store/use-cart';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export type AddressFormProps = {
   value?: AddressFormValues;
@@ -34,6 +35,7 @@ export type AddressFormProps = {
 };
 
 function AddressForm({ className = '', value }: AddressFormProps) {
+  const [trackingId, setTrackingId] = useState('');
   const items = useCart(c => c.items);
   const clearCart = useCart(c => c.clearCart);
 
@@ -63,7 +65,11 @@ function AddressForm({ className = '', value }: AddressFormProps) {
 
     setLoading(true);
 
-    const { error, success } = await placeOrder({
+    const {
+      error,
+      success,
+      data: res,
+    } = await placeOrder({
       ordersAddress: data,
       orderItems: items,
     });
@@ -71,7 +77,16 @@ function AddressForm({ className = '', value }: AddressFormProps) {
     if (!success)
       toast.error(error || 'Something went wrong!', { richColors: true });
     else {
-      toast.success('Order Placed!');
+      toast.success(
+        <Link href={`/orders/${res?.trackingId}`} className='underline'>
+          Track your order
+        </Link>,
+        {
+          richColors: true,
+          dismissible: true,
+          duration: 5000,
+        }
+      );
       clearCart();
       form.reset();
       router.replace('/products');
@@ -81,229 +96,208 @@ function AddressForm({ className = '', value }: AddressFormProps) {
   };
 
   return (
-    <Accordion type='single' collapsible defaultValue='address-form'>
-      <AccordionItem value='address-form'>
-        <Card>
-          <CardHeader>
-            <AccordionTrigger className='cursor-pointer m-0 p-0'>
-              <CardTitle>Shipping Address</CardTitle>
-            </AccordionTrigger>
-          </CardHeader>
-          <AccordionContent className='m-0 p-0'>
-            <CardContent>
-              <Form {...form}>
-                <form
-                  className={className}
-                  onSubmit={form.handleSubmit(onSubmit ?? (() => {}))}
-                >
-                  <div className='grid gap-4'>
-                    <FormField
-                      control={form.control}
-                      name='name'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Full Name</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              disabled={loading}
-                              autoComplete='get-name'
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='address1'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Address</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              disabled={loading}
-                              autoComplete='address-line1'
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='address2'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            Apartment, suite, etc. (optional)
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              disabled={loading}
-                              autoComplete='address-line2'
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <div className='flex flex-wrap gap-4'>
-                      <div className='min-w-[120px] flex-1'>
-                        <FormField
-                          control={form.control}
-                          name='city'
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>City</FormLabel>
-                              <FormControl>
-                                <Input
-                                  {...field}
-                                  disabled={loading}
-                                  autoComplete='address-level2'
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <div className='min-w-[120px] flex-1'>
-                        <FormField
-                          control={form.control}
-                          name='state'
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>State</FormLabel>
-                              <FormControl>
-                                <Input
-                                  {...field}
-                                  disabled={loading}
-                                  autoComplete='address-level1'
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <div className='min-w-[120px] flex-1'>
-                        <FormField
-                          control={form.control}
-                          name='postalCode'
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Postal Code</FormLabel>
-                              <FormControl>
-                                <Input
-                                  {...field}
-                                  disabled={loading}
-                                  autoComplete='postal-code'
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </div>
-                    <FormField
-                      control={form.control}
-                      name='country'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Country</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              disabled={loading}
-                              autoComplete='country'
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='phone'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Phone</FormLabel>
-                          <FormControl>
-                            <PhoneInput
-                              {...field}
-                              disabled={loading}
-                              // autoComplete='tel'
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='email'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              disabled={loading}
-                              autoComplete='email'
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* <FormField
-                control={form.control}
-                name='isBillingAddress'
-                render={({ field }) => (
-                  <FormItem className='flex'>
-                    <FormControl>
-                      <Checkbox
-                        name={field.name}
-                        checked={field.value ?? false}
-                        onCheckedChange={value => {
-                          field.onChange(value);
-                        }}
-                        onBlur={field.onBlur}
-                        ref={field.ref}
-                        disabled={loading}
+    <>
+      <Accordion type='single' collapsible defaultValue='address-form'>
+        <AccordionItem value='address-form'>
+          <Card>
+            <CardHeader>
+              <AccordionTrigger className='cursor-pointer m-0 p-0'>
+                <CardTitle>Shipping Address</CardTitle>
+              </AccordionTrigger>
+            </CardHeader>
+            <AccordionContent className='m-0 p-0'>
+              <CardContent>
+                <Form {...form}>
+                  <form
+                    className={className}
+                    onSubmit={form.handleSubmit(onSubmit ?? (() => {}))}
+                  >
+                    <div className='grid gap-4'>
+                      <FormField
+                        control={form.control}
+                        name='name'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Full Name</FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                disabled={loading}
+                                autoComplete='get-name'
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </FormControl>
-                    <FormLabel>Same for Billing Address</FormLabel>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
+                      <FormField
+                        control={form.control}
+                        name='address1'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Address</FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                disabled={loading}
+                                autoComplete='address-line1'
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='address2'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              Apartment, suite, etc. (optional)
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                disabled={loading}
+                                autoComplete='address-line2'
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <div className='flex flex-wrap gap-4'>
+                        <div className='min-w-[120px] flex-1'>
+                          <FormField
+                            control={form.control}
+                            name='city'
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>City</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    {...field}
+                                    disabled={loading}
+                                    autoComplete='address-level2'
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className='min-w-[120px] flex-1'>
+                          <FormField
+                            control={form.control}
+                            name='state'
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>State</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    {...field}
+                                    disabled={loading}
+                                    autoComplete='address-level1'
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className='min-w-[120px] flex-1'>
+                          <FormField
+                            control={form.control}
+                            name='postalCode'
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Postal Code</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    {...field}
+                                    disabled={loading}
+                                    autoComplete='postal-code'
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
+                      <FormField
+                        control={form.control}
+                        name='country'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Country</FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                disabled={loading}
+                                autoComplete='country'
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='phone'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Phone</FormLabel>
+                            <FormControl>
+                              <PhoneInput
+                                {...field}
+                                disabled={loading}
+                                // autoComplete='tel'
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='email'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                disabled={loading}
+                                autoComplete='email'
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <p className='text-sm font-semibold'>
-                      Note: We only support cash-on delivery at the moment.
-                    </p>
+                      <p className='text-sm font-semibold'>
+                        Note: We only support cash-on delivery at the moment.
+                      </p>
 
-                    <LoadingButton
-                      type='submit'
-                      disabled={loading}
-                      loading={loading}
-                      className='mt-2 w-full'
-                    >
-                      Place Order
-                    </LoadingButton>
-                  </div>
-                </form>
-              </Form>
-            </CardContent>
-          </AccordionContent>
-        </Card>
-      </AccordionItem>
-    </Accordion>
+                      <LoadingButton
+                        type='submit'
+                        disabled={loading}
+                        loading={loading}
+                        className='mt-2 w-full'
+                      >
+                        Place Order
+                      </LoadingButton>
+                    </div>
+                  </form>
+                </Form>
+              </CardContent>
+            </AccordionContent>
+          </Card>
+        </AccordionItem>
+      </Accordion>
+    </>
   );
 }
 
