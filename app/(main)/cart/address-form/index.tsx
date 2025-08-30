@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -16,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import PhoneInput from '@/components/commerce-ui/phone-number-input-basic';
 import { addressFormSchema, AddressFormValues } from './schema';
 import LoadingButton from '@/components/app/LoadingButton';
-import { addAddress } from './action';
+import { placeOrder } from './action';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -27,6 +26,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { useCart } from '@/lib/stores/cart-store/use-cart';
+import { useRouter } from 'next/navigation';
 
 export type AddressFormProps = {
   value?: AddressFormValues;
@@ -35,6 +35,7 @@ export type AddressFormProps = {
 
 function AddressForm({ className = '', value }: AddressFormProps) {
   const items = useCart(c => c.items);
+  const clearCart = useCart(c => c.clearCart);
 
   const form = useForm<AddressFormValues>({
     defaultValues: value || {
@@ -54,17 +55,29 @@ function AddressForm({ className = '', value }: AddressFormProps) {
   });
 
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const onSubmit = async (data: AddressFormValues) => {
+    if (!items.length)
+      return toast.error('Your cart is empty!', { richColors: true });
+
     setLoading(true);
 
-    const { error, success } = await addAddress(data);
+    const { error, success } = await placeOrder({
+      ordersAddress: data,
+      orderItems: items,
+    });
 
     if (!success)
       toast.error(error || 'Something went wrong!', { richColors: true });
-    else toast.success('Address added!');
+    else {
+      toast.success('Order Placed!');
+      clearCart();
+      form.reset();
+      router.replace('/products');
+    }
 
-    setLoading(true);
+    setLoading(false);
   };
 
   return (
@@ -278,6 +291,7 @@ function AddressForm({ className = '', value }: AddressFormProps) {
                     <LoadingButton
                       type='submit'
                       disabled={loading}
+                      loading={loading}
                       className='mt-2 w-full'
                     >
                       Place Order
