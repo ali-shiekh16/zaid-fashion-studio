@@ -1,7 +1,7 @@
 import { Address } from './address';
 
 export enum OrderStatus {
-  deraft = 'draft',
+  draft = 'draft',
   pending = 'pending',
   confirmed = 'confirmed',
   shipped = 'shipped',
