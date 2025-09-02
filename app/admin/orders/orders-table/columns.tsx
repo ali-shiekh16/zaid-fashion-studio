@@ -16,9 +16,10 @@ import { Category } from '@/lib/data/categories/types';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import Link from 'next/link';
-import { Order } from '@/lib/types/order';
+import { Order, OrderStatus } from '@/lib/types/order';
 import { formatCurrency } from '@/lib/app-utils';
 import { Badge } from '@/components/ui/badge';
+import { StatusDropdown } from './status-dropdown';
 
 const columns: ColumnDef<Order>[] = [
   {
@@ -45,8 +46,11 @@ const columns: ColumnDef<Order>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Status' />
     ),
-    cell: ({ cell }) => (
-      <Badge className='uppercase'>{cell.getValue() as string}</Badge>
+    cell: ({ cell, row }) => (
+      <StatusDropdown
+        defaultStatus={cell.getValue<OrderStatus>()}
+        id={+row.original.id}
+      />
     ),
   },
 
