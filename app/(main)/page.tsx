@@ -1,12 +1,12 @@
 import React from 'react';
 
-import LogoutButton from '@/components/app/logout-button';
+import Cover from './home/hero';
 
 const Page = () => {
   return (
-    <div className='h-screen grid place-content-center'>
-      <LogoutButton>Logout</LogoutButton>
-    </div>
+    <>
+      <Cover />
+    </>
   );
 };
 

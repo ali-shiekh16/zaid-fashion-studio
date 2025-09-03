@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { HTMLAttributes, useId } from 'react';
 import { SearchIcon, ShoppingBag } from 'lucide-react';
 
 import Logo from '@/components/logo';
@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/popover';
 import Link from 'next/link';
 import CartBadge from './cart-badge';
+import { cn } from '@/lib/utils';
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
@@ -25,11 +26,14 @@ const navigationLinks = [
   { href: '#', label: 'Deals' },
 ];
 
-export default function Navbar() {
+export default function Navbar({
+  className,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) {
   const id = useId();
 
   return (
-    <header className='px-4 md:px-6'>
+    <header {...props} className={cn('px-4 md:px-6', className)}>
       <div className='flex h-16 items-center justify-between gap-4'>
         {/* Left side */}
         <div className='flex flex-1 items-center gap-2'>
@@ -73,7 +77,10 @@ export default function Navbar() {
                 <NavigationMenuList className='flex-col items-start gap-0 md:gap-2'>
                   {navigationLinks.map((link, index) => (
                     <NavigationMenuItem key={index} className='w-full'>
-                      <NavigationMenuLink href={link.href} className='py-1.5'>
+                      <NavigationMenuLink
+                        href={link.href}
+                        // className={`[&_svg:not([class*='text-'])]:text-black`}
+                      >
                         {link.label}
                       </NavigationMenuLink>
                     </NavigationMenuItem>
@@ -100,20 +107,20 @@ export default function Navbar() {
           </Popover>
           {/* Main nav */}
           <div className='flex flex-1 items-center gap-6 max-md:justify-between'>
-            <a href='#' className='text-primary hover:text-primary/90'>
+            <Link href='/' className='text-primary hover:text-primary/90'>
               <Logo />
-            </a>
+            </Link>
             {/* Navigation menu */}
             <NavigationMenu className='max-md:hidden'>
               <NavigationMenuList className='gap-2'>
                 {navigationLinks.map((link, index) => (
                   <NavigationMenuItem key={index}>
-                    <NavigationMenuLink
+                    <Link
                       href={link.href}
-                      className='text-muted-foreground hover:text-primary py-1.5 font-medium'
+                      className="data-[active]:focus:bg-accent data-[active]:hover:bg-accent data-[active]:bg-accent data-[active]:text-accent-foreground hover:bg-accent focus:bg-accent focus:text-accent-foreground focus-visible:ring-ring/50 [&_svg:not([class*='text-'])]:text-muted-foreground flex flex-col gap-1 rounded-sm p-2 text-sm transition-all outline-none focus-visible:ring-[3px] focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4"
                     >
                       {link.label}
-                    </NavigationMenuLink>
+                    </Link>
                   </NavigationMenuItem>
                 ))}
               </NavigationMenuList>

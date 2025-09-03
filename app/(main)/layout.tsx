@@ -1,4 +1,4 @@
-import Navbar from '@/components/layout/navbar';
+import NavBgWrapper from '@/components/layout/nav-bg-wrapper';
 
 export default function Layout({
   children,
@@ -7,7 +7,7 @@ export default function Layout({
 }>) {
   return (
     <>
-      <Navbar />
+      <NavBgWrapper />
       {children}
     </>
   );
