@@ -1,3 +1,4 @@
+import Footer from '@/components/layout/footer';
 import NavBgWrapper from '@/components/layout/nav-bg-wrapper';
 
 export default function Layout({
@@ -9,6 +10,7 @@ export default function Layout({
     <>
       <NavBgWrapper />
       {children}
+      <Footer />
     </>
   );
 }
