@@ -1,5 +1,6 @@
 import Footer from '@/components/layout/footer';
 import NavBgWrapper from '@/components/layout/nav-bg-wrapper';
+import Newsletter from '@/components/layout/newsletter';
 
 export default function Layout({
   children,
@@ -10,6 +11,7 @@ export default function Layout({
     <>
       <NavBgWrapper />
       {children}
+      <Newsletter />
       <Footer />
     </>
   );
