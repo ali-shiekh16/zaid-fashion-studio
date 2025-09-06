@@ -38,7 +38,7 @@ export const faqs = [
 
 export function FAQ() {
   return (
-    <Block>
+    <Block className='bg-gray-50'>
       <Container className='flex flex-col items-center space-y-5'>
         <h2 className='text-center text-2xl md:text-3xl font-semibold'>
           Frequently Asked Questions
