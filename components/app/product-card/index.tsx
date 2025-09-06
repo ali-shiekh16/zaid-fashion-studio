@@ -10,9 +10,9 @@ function ProductCard(product: Product) {
   const { images, price, name: title, id } = product;
 
   return (
-    <div className='group relative flex  flex-col overflow-hidden rounded-md md:max-w-[300px]'>
+    <div className='group relative overflow-hidden rounded-md md:max-w-[300px]'>
       {/* Image section with background and dynamic glow effect */}
-      <div className=' overflow-hidden'>
+      <div className='relative overflow-hidden'>
         <Link href={`/products/${id}`}>
           <Image
             width='500'
@@ -22,25 +22,28 @@ function ProductCard(product: Product) {
             className='w-full h-full md:w-[300px] md:min-h-[450px] object-contain transition-transform duration-500 hover:scale-105 bg-muted'
           />
         </Link>
-      </div>
 
-      {/* Content section */}
-      <div className='flex flex-1 flex-col mt-2 '>
-        <h3 className='text-lg font-normal tracking-tight'>{title}</h3>
+        {/* Overlay content that appears on hover */}
+        <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4'>
+          {/* Content section - positioned at bottom of image */}
+          <div className='text-white space-y-3'>
+            <h3 className='text-lg font-normal tracking-tight'>{title}</h3>
 
-        <div className='flex space-x-2 mt-3'>
-          <strong className='text-xl font-medium'>
-            PKR {formatCurrency(price)}
-          </strong>
+            <div className='flex space-x-2'>
+              <strong className='text-xl font-medium'>
+                PKR {formatCurrency(price)}
+              </strong>
 
-          <strong className='text-xl text-muted-foreground font-medium  line-through'>
-            {formatCurrency(price + price * 0.25)}
-          </strong>
-        </div>
+              <strong className='text-xl text-white/70 font-medium line-through'>
+                {formatCurrency(price + price * 0.25)}
+              </strong>
+            </div>
 
-        <div className='mt-3 flex flex-col gap-2'>
-          <AddCartBtn {...product} />
-          <BuyBtn {...product} />
+            <div className='flex flex-col gap-2'>
+              <AddCartBtn {...product} />
+              <BuyBtn {...product} />
+            </div>
+          </div>
         </div>
       </div>
     </div>

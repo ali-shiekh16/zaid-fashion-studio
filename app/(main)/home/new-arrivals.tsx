@@ -10,7 +10,7 @@ const NewArrivals = () => {
     <Block>
       <Container>
         <h2 className='text-center text-2xl md:text-3xl font-semibold mb-14'>
-          Shop Now
+          Explore New Arrivals
         </h2>
         <Suspense
           fallback={
